@@ -59,8 +59,8 @@ elif page == "Predict Student Risk":
             clicks=st.number_input("VLE clicks (first 28 days)",0,100000,int(source["early_clicks"]))
             days=st.number_input("Active days (first 28 days)",0,28,int(source["active_days"]))
             submissions=st.number_input("Submitted assessments",0,50,int(source["early_submissions"]))
-            current_score=0 if pd.isna(source["early_mean_score"]) else float(source["early_mean_score"])
-            score=st.number_input("Mean early score",0.,100.,current_score)
+            current_score=0.0 if pd.isna(source["early_mean_score"]) else float(source["early_mean_score"])
+            score=st.number_input("Mean early score", min_value=0.0, max_value=100.0, value=float(current_score), step=1.0)
         clicked=st.form_submit_button("Analyze risk",type="primary")
     if clicked:
         row=pd.DataFrame([{"code_module":module,"code_presentation":presentation,"num_of_prev_attempts":prev,
