@@ -16,8 +16,8 @@
 ## Run in Google Colab
 1. Open the **Open in Colab** badge above.
 2. Run the notebook cells in order.
-3. The notebook clones this repository, installs dependencies, trains a **synthetic demo** model, and launches the Streamlit GUI through Colab's notebook port proxy.
-4. To train with OULAD, download and extract the dataset into Google Drive, then run the optional Drive/training notebook cells.
+3. The notebook clones this repository, installs dependencies, downloads the original OULAD ZIP from the UCI Machine Learning Repository, trains the models on **real OULAD data**, and launches the Streamlit GUI through Colab's notebook port proxy.
+4. The download and extraction are automatic; you do **not** need Google Drive, Git LFS, or manual CSV uploads. Synthetic training is an optional fallback only.
 
 Note: A saved model is **not included** in the repository. The Colab notebook trains it automatically. It will regenerate evaluation files under `models/`.
 
@@ -73,3 +73,6 @@ EduGuard-AI/
 
 ## Limitations and safety
 Synthetic demonstration results are illustrative and must not be presented as scientific evidence. OULAD is observational; predictive associations do not establish that interventions cause improved results. Conformal coverage is marginal under exchangeability assumptions, not a guarantee for any individual student. This is an educational research prototype, not a production system for automated student decisions. Protect student records and require qualified human review.
+
+## Dataset download in Colab
+The Colab notebook automatically downloads the CC BY 4.0 OULAD release from [UCI](https://archive.ics.uci.edu/dataset/349/open+university+learning+analytics+dataset) and extracts it to `data/oulad/`. `studentVle.csv` is over 400 MB uncompressed, so the repository intentionally does not commit it. A legacy 1-byte `data` file may appear in GitHub; it is not a dataset. Do not try to store the raw CSV at that path.
