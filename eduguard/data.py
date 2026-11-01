@@ -20,6 +20,8 @@ def load_oulad(folder, cutoff=28):
     info = info[KEYS + ["num_of_prev_attempts", "studied_credits", "at_risk"]]
     clicks, days = {}, {}
     for chunk in pd.read_csv(folder / "studentVle.csv", usecols=KEYS + ["date", "sum_click"], chunksize=350000):
+        chunk["date"] = pd.to_numeric(chunk["date"], errors="coerce")
+        chunk["sum_click"] = pd.to_numeric(chunk["sum_click"], errors="coerce").fillna(0)
         chunk = chunk[(chunk.date >= 0) & (chunk.date < cutoff)]
         for key, part in chunk.groupby(KEYS, sort=False):
             clicks[key] = clicks.get(key, 0) + float(part.sum_click.sum())
@@ -27,6 +29,11 @@ def load_oulad(folder, cutoff=28):
     vle = pd.DataFrame([(*key, count, len(days[key])) for key, count in clicks.items()], columns=KEYS + ["early_clicks", "active_days"])
     meta = pd.read_csv(folder / "assessments.csv", usecols=["id_assessment", "code_module", "code_presentation", "date", "assessment_type"])
     sa = pd.read_csv(folder / "studentAssessment.csv", usecols=["id_assessment", "id_student", "date_submitted", "score"])
+    # Some OULAD assessment dates are missing or stored as strings; coercion prevents
+    # string-vs-integer comparison errors and excludes unknown due dates.
+    meta["date"] = pd.to_numeric(meta["date"], errors="coerce")
+    sa["date_submitted"] = pd.to_numeric(sa["date_submitted"], errors="coerce")
+    sa["score"] = pd.to_numeric(sa["score"], errors="coerce")
     sa = sa.merge(meta, on="id_assessment", how="inner", validate="many_to_one")
     sa = sa[(sa.date_submitted >= 0) & (sa.date_submitted < cutoff) & sa.date.notna() & (sa.date < cutoff) & (sa.assessment_type != "Exam")]
     assessments = sa.groupby(KEYS, as_index=False).agg(early_submissions=("score", "size"), early_mean_score=("score", "mean"))
