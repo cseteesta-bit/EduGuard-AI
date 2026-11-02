@@ -173,18 +173,15 @@ flowchart TB
 | Conformal coverage | 0.9017 (90.17%) | **0.9045 (90.45%)** |
 | Mean prediction-set size | 1.4151 | **1.3899** |
 
-**Figure 5. Model comparison across test metrics**
+**Figure 5. Held-out OULAD classification performance**
 
-```mermaid
-xychart-beta
-    title "Held-out test comparison"
-    x-axis ["Accuracy", "F1", "ROC-AUC", "Coverage"]
-    y-axis "Score" 0 --> 1
-    bar [0.7490, 0.7336, 0.8174, 0.9017]
-    bar [0.7484, 0.7342, 0.8261, 0.9045]
-```
+![Classification performance on OULAD test data](report_figures/model_performance.svg)
 
-*Bar series in order: Logistic Regression, Random Forest. Average set size is omitted from this common 0–1 scale.*
+**Figure 6. Split conformal coverage and prediction-set size**
+
+![Conformal coverage and normalized prediction set sizes](report_figures/conformal_performance.svg)
+
+*In Figure 6, mean set size is divided by two solely for display on a shared 0–1 axis (two candidate labels); the unscaled values are given in Table 1.*
 
 ### 7.1 Analysis of the observed results
 
@@ -194,15 +191,29 @@ At the configured **90% nominal marginal coverage**, both conformal predictors a
 
 The Random Forest model was selected by validation F1-score; the test-set results are presented for independent comparison. Precision, recall, balanced accuracy, Brier score and confusion matrix values were not supplied in this run and should be extracted directly from `models/metrics.json` if required for the final report.
 
-### 7.2 Screenshots to insert after running the GUI
+### 7.2 Graphical user interface figures
 
-**Figure 6. Overview and Evaluation dashboard — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+The repository does not contain captured images from a running Colab/Streamlit browser. The following **labeled illustrations** show the actual intended interface sections and are not represented as authentic runtime screenshots. Replace them with browser captures before claiming they are screenshots in a final university submission.
 
-**Figure 7. Student Risk Prediction, Conformal Set, and Local Explanation — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+**Figure 7. Overview and Evaluation interface (illustrative layout)**
 
-**Figure 8. Batch Prediction Interface and CSV Results — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+![Overview and evaluation illustrated interface](report_figures/gui_overview_illustration.svg)
 
-The screenshot slots are intentionally placeholders; the figures must represent the actual running application, not generated mockups.
+**Figure 8. Individual student risk analysis interface (illustrative layout)**
+
+![Individual risk analysis illustrated interface](report_figures/gui_student_illustration.svg)
+
+**Figure 9. Batch CSV prediction interface (illustrative layout)**
+
+![Batch prediction illustrated interface](report_figures/gui_batch_illustration.svg)
+
+#### Capturing authentic screenshots in Google Colab
+
+1. Run the real OULAD training notebook and open the Streamlit dashboard in a browser tab.
+2. Capture the **Overview & Evaluation** page with real model metrics visible.
+3. Capture the **Predict Student Risk** page after selecting and analyzing an example record, including the conformal set and explanation visualization.
+4. Capture the **Batch Predictions** page after uploading a CSV (remove or blur any sensitive student identifiers).
+5. Save images as `report_figures/real_overview.png`, `report_figures/real_student.png`, and `report_figures/real_batch.png`; upload them to GitHub, and replace the corresponding image paths in this report.
 
 ### 7.3 Interpretation guidance
 
@@ -243,10 +254,24 @@ EduGuard-AI implements a reproducible early academic-risk prediction pipeline wi
 - GitHub: https://github.com/cseteesta-bit/EduGuard-AI
 - Colab: https://colab.research.google.com/github/cseteesta-bit/EduGuard-AI/blob/main/EduGuard-AI-GitHub-Colab.ipynb
 
-## Appendix B. Submission checklist
+## Appendix B. Report figure index
+
+| Figure | Content | Evidence type |
+|---|---|---|
+| 1 | System architecture | Architecture diagram |
+| 2 | Model development workflow | Methodology diagram |
+| 3 | Inference and uncertainty workflow | Methodology diagram |
+| 4 | Streamlit module organization | Application design diagram |
+| 5 | Classification model comparison | Reported OULAD test results |
+| 6 | Conformal coverage and set size | Reported OULAD test results |
+| 7 | Overview dashboard illustration | Illustrative, not a runtime capture |
+| 8 | Student risk form illustration | Illustrative, not a runtime capture |
+| 9 | Batch prediction illustration | Illustrative, not a runtime capture |
+
+## Appendix C. Submission checklist
 
 - [ ] Complete cover-page details.
 - [x] Add the five reported real-data metrics from the Colab output.
 - [ ] Add remaining metrics and confusion matrix from `models/metrics.json` if required.
-- [ ] Capture and insert actual running dashboard screenshots.
+- [x] Add labeled interface illustrations; actual runtime screenshots are still required for a screenshot-based submission.
 - [ ] Verify references, page numbering, and local academic formatting.
