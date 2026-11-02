@@ -161,38 +161,54 @@ flowchart TB
 
 ## 7. Experimental Results and Evaluation
 
-**Important:** Real OULAD model metrics were not supplied when this report was prepared. Enter values from a successful real-data run of `models/metrics.json`. Do not substitute synthetic demo metrics.
+**Reported run:** The following figures are the real OULAD test results provided from the completed Colab training output. Additional metrics not included in that output remain unreported rather than estimated. The selected model was **Random Forest**, chosen on validation F1-score (not by test accuracy).
 
 **Table 1. Held-out OULAD test-set results**
 
 | Metric | Logistic Regression | Random Forest |
 |---|---:|---:|
-| Accuracy | [actual value] | [actual value] |
-| Balanced accuracy | [actual value] | [actual value] |
-| Precision | [actual value] | [actual value] |
-| Recall | [actual value] | [actual value] |
-| F1-score | [actual value] | [actual value] |
-| ROC-AUC | [actual value] | [actual value] |
-| Average precision | [actual value] | [actual value] |
-| Brier score | [actual value] | [actual value] |
-| Conformal coverage | [actual value] | [actual value] |
-| Mean prediction-set size | [actual value] | [actual value] |
+| Accuracy | 0.7490 (74.90%) | 0.7484 (74.84%) |
+| F1-score | 0.7336 | **0.7342** |
+| ROC-AUC | 0.8174 | **0.8261** |
+| Conformal coverage | 0.9017 (90.17%) | **0.9045 (90.45%)** |
+| Mean prediction-set size | 1.4151 | **1.3899** |
 
-### 7.1 Screenshots to insert after running the GUI
+**Figure 5. Model comparison across test metrics**
 
-**Figure 5. Overview and Evaluation dashboard — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+```mermaid
+xychart-beta
+    title "Held-out test comparison"
+    x-axis ["Accuracy", "F1", "ROC-AUC", "Coverage"]
+    y-axis "Score" 0 --> 1
+    bar [0.7490, 0.7336, 0.8174, 0.9017]
+    bar [0.7484, 0.7342, 0.8261, 0.9045]
+```
 
-**Figure 6. Student Risk Prediction, Conformal Set, and Local Explanation — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+*Bar series in order: Logistic Regression, Random Forest. Average set size is omitted from this common 0–1 scale.*
 
-**Figure 7. Batch Prediction Interface and CSV Results — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+### 7.1 Analysis of the observed results
+
+Both classifiers yielded similar predictive classification performance. Logistic Regression achieved slightly higher accuracy (**74.90%** versus **74.84%**), a difference of **0.06 percentage points**. Random Forest achieved a slightly higher F1-score (**0.7342** versus **0.7336**) and a higher ROC-AUC (**0.8261** versus **0.8174**). The ROC-AUC advantage of 0.0087 suggests somewhat better ranking performance on this held-out partition, but statistical significance cannot be established from a single test run.
+
+At the configured **90% nominal marginal coverage**, both conformal predictors attained coverage close to target: **90.17%** for Logistic Regression and **90.45%** for Random Forest. Random Forest also achieved a smaller mean prediction-set size (**1.3899** instead of **1.4151**), suggesting slightly more informative prediction sets on the evaluated records. Coverage alone is not a measure of student-level certainty, and these figures do not guarantee performance after deployment or distribution shift.
+
+The Random Forest model was selected by validation F1-score; the test-set results are presented for independent comparison. Precision, recall, balanced accuracy, Brier score and confusion matrix values were not supplied in this run and should be extracted directly from `models/metrics.json` if required for the final report.
+
+### 7.2 Screenshots to insert after running the GUI
+
+**Figure 6. Overview and Evaluation dashboard — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+
+**Figure 7. Student Risk Prediction, Conformal Set, and Local Explanation — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
+
+**Figure 8. Batch Prediction Interface and CSV Results — [INSERT AUTHENTIC STREAMLIT SCREENSHOT].**
 
 The screenshot slots are intentionally placeholders; the figures must represent the actual running application, not generated mockups.
 
-### 7.2 Interpretation guidance
+### 7.3 Interpretation guidance
 
 Compare F1-score and recall to investigate missed at-risk cases, inspect precision to understand false alerts, and use Brier score for probability quality. Conformal coverage must be interpreted jointly with average set size and ambiguous-set rate: a large prediction set can cover well while remaining uninformative.
 
-The current evidence is insufficient to state which algorithm performed best on real OULAD data. Insert a discussion after measuring both models.
+The models are close in accuracy and F1-score. Their relative performance should be further evaluated across multiple random seeds and course-presentation splits.
 
 ## 8. Limitations and Responsible Use
 
@@ -230,6 +246,7 @@ EduGuard-AI implements a reproducible early academic-risk prediction pipeline wi
 ## Appendix B. Submission checklist
 
 - [ ] Complete cover-page details.
-- [ ] Insert true test-set metrics from `models/metrics.json`.
+- [x] Add the five reported real-data metrics from the Colab output.
+- [ ] Add remaining metrics and confusion matrix from `models/metrics.json` if required.
 - [ ] Capture and insert actual running dashboard screenshots.
 - [ ] Verify references, page numbering, and local academic formatting.
