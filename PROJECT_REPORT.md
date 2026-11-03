@@ -32,9 +32,59 @@ Educational institutions increasingly collect assessments, academic records, and
 
 The binary outcome is **at risk = Fail or Withdrawn**, **not at risk = Pass or Distinction**. This is a retrospective classification of *eventual final results* using early-course observations; it is not a diagnosis, a causal model, or a policy for automatically intervening with students.
 
-## 2. Background
+## 2. Background and Literature Review
 
-**Random Forest** aggregates decision trees to model nonlinear relationships. **Logistic Regression** models the log odds of a binary outcome and provides a useful baseline. **Explainable AI** methods provide local contributions describing a model's behavior. **Split conformal prediction** derives a prediction-set cutoff from held-out calibration data and provides nominal marginal coverage under exchangeability.
+### 2.1 Educational data mining and early-warning systems
+
+Educational data mining (EDM) and learning analytics study how academic records and online learning behavior can be used to understand student progress and anticipate difficulties. Predicting an adverse final outcome from information available early in a course may help educators prioritize supportive contact; however, the prediction itself does not demonstrate that any particular intervention will improve outcomes. A 2025 systematic review by Shi and colleagues surveyed a decade of machine-learning applications for identifying at-risk learners in online education and emphasized the importance of consistent risk definitions and careful interpretation of model strengths and limitations [8].
+
+### 2.2 The OULAD dataset and early-course indicators
+
+Kuzilek, Hlosta, and Zdrahal introduced the Open University Learning Analytics Dataset (OULAD), linking student information, assessment records, and virtual learning environment (VLE) activity [1]. Its combination of course outcomes and timestamped online engagement makes it suitable for retrospective early-warning experiments. The original dataset covers 22 course presentations and 32,593 student records, together with a large collection of daily VLE interaction summaries [1].
+
+Because final grades or future assessment information would leak knowledge unavailable at prediction time, EduGuard-AI uses only VLE activity and eligible assessments from course days 0–27, alongside existing student/course information. The target is eventual **Fail/Withdrawn** versus **Pass/Distinction**. This cutoff defines an early prediction task, but a retrospective grouped split does not by itself prove generalization to future cohorts or different institutions.
+
+### 2.3 Predictive models for student risk
+
+Research on academic-risk and dropout prediction frequently uses Logistic Regression, decision trees, Random Forest, and gradient boosting because these approaches work well with structured records and are relatively practical to deploy. Breiman's Random Forest framework combines multiple decision trees to learn complex nonlinear relationships while reducing dependence on a single tree [2]. Logistic Regression provides a useful lower-complexity baseline and a direct relationship between transformed features and log-odds.
+
+A 2026 systematic review by Boujmiraz, Darhmaoui, and Drissi el Maliani synthesized 72 studies of student-performance prediction and reported extensive use of tree-based models and neural networks, while noting a growing but still incomplete emphasis on explainability [9]. A separate 2026 review of higher-education dropout prediction highlighted limited cross-institution generalizability, insufficient attention to fairness, and challenges in moving predictive systems into actual institutional practice [10]. These observations support comparing an interpretable baseline with a nonlinear ensemble rather than assuming that a more complicated model must be superior.
+
+### 2.4 Explainable AI for educational decisions
+
+A prediction score provides limited practical context unless instructors can examine what the model relied on. Lundberg and Lee proposed SHAP (SHapley Additive exPlanations), which expresses individual predictions using additive feature contributions [3]. In EduGuard-AI, SHAP is applied to Random Forest predictions, while Logistic Regression displays transformed-feature coefficient contributions. This approach enables inspection of learned predictors such as online activity and early assessment performance.
+
+Nevertheless, feature attribution measures the contribution to a **model prediction**, not the causal effect of changing a student's behavior. A systematic review of university dropout prediction and explainability covering research from 2012–2024 likewise underlined the importance of moving beyond predictive performance when interpreting risk factors [11]. For this reason, EduGuard-AI treats its academic support suggestions as transparent, rule-based prompts for human review, not validated interventions.
+
+### 2.5 Uncertainty-aware machine learning
+
+Many student-risk systems present a binary class or a probability without indicating how reliably that label should be interpreted. Conformal prediction offers a complementary way to express uncertainty: a separate calibration dataset is used to construct candidate-label sets with nominal marginal coverage under exchangeability assumptions. The foundational framework was developed by Vovk, Gammerman, and Shafer [4], and Angelopoulos and Bates provide a modern practical introduction to conformal uncertainty quantification [12].
+
+EduGuard-AI applies split conformal prediction at significance level 0.10. Depending on the calibrated threshold, a prediction set may contain one, both, or neither of the candidate academic outcomes. Coverage must be reported together with average set size: including both labels frequently may improve coverage at the cost of informative decisions. Validity may also weaken when deployment students differ substantially from calibration students.
+
+### 2.6 Research gap and positioning of EduGuard-AI
+
+Prior research establishes that academic-risk prediction is feasible, but recurring challenges concern the interpretation, reliability, and practical use of model outputs [8]–[11]. EduGuard-AI addresses an **integration and reproducibility gap** at course-project scale rather than claiming a newly invented learning algorithm. Its distinctive combination is:
+
+1. Early-window features restricted to the first 28 course days.
+2. A comparison between Logistic Regression and Random Forest with validation-based model selection.
+3. A separate calibration partition for uncertainty-aware conformal prediction sets.
+4. Local explanations and transparent, human-reviewed support suggestions.
+5. A reproducible Streamlit interface for individual and batch risk assessment.
+
+The project does not claim to establish a state-of-the-art benchmark, causal effectiveness of recommendations, or prospective deployment readiness.
+
+### 2.7 Summary of selected literature
+
+| Study | Primary contribution | Relevance to EduGuard-AI |
+|---|---|---|
+| Kuzilek et al. (2017) [1] | OULAD dataset linking academic records and VLE activity | Dataset and early learning indicators |
+| Breiman (2001) [2] | Random Forest ensemble learning | Nonlinear classification baseline |
+| Lundberg and Lee (2017) [3] | SHAP explanation framework | Local interpretability |
+| Shi et al. (2025) [8] | Review of at-risk prediction in online education | Problem formulation and evaluation caution |
+| Boujmiraz et al. (2026) [9] | Review of ML, deep learning, and XAI for student performance | Predictive modeling and explainability context |
+| Higher-education dropout review (2026) [10] | Synthesis of modeling, interpretability, and deployment limitations | Responsible-use considerations |
+| Angelopoulos and Bates (2023) [12] | Introduction to conformal uncertainty quantification | Calibration and prediction-set methodology |
 
 ## 3. Proposed Architecture
 
@@ -248,6 +298,16 @@ EduGuard-AI implements a reproducible early academic-risk prediction pipeline wi
 [6] Open University Learning Analytics Dataset, UCI Machine Learning Repository. https://archive.ics.uci.edu/dataset/349/open+university+learning+analytics+dataset
 
 [7] Streamlit documentation. https://docs.streamlit.io/
+
+[8] Y. Shi et al., “Applications of Machine Learning for at-Risk Student Prediction in Online Education: A 10-Year Systematic Review of Literature,” *Journal of Computer Assisted Learning*, vol. 41, no. 4, 2025. https://doi.org/10.1111/jcal.70058
+
+[9] S. Boujmiraz, H. Darhmaoui, and A. Drissi el Maliani, “Predicting student performance: A comprehensive review of machine learning, deep learning, and explainable AI approaches,” *Computers and Education: Artificial Intelligence*, article 100548, 2026. https://doi.org/10.1016/j.caeai.2026.100548
+
+[10] “Machine Learning and Deep Learning for Dropout Prediction in Higher Education: A Review,” *Computers*, vol. 15, no. 3, article 164, 2026. https://doi.org/10.3390/computers15030164
+
+[11] “Factors, Prediction, Explainability, and Simulating University Dropout Through Machine Learning: A Systematic Review, 2012–2024,” *Computation*, vol. 13, no. 8, article 198, 2025. https://www.mdpi.com/2079-3197/13/8/198
+
+[12] A. N. Angelopoulos and S. Bates, “A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification,” *Foundations and Trends in Machine Learning*, 2023. https://arxiv.org/abs/2107.07511
 
 ## Appendix A. Project code and Colab
 
